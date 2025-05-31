@@ -8,7 +8,7 @@ import {
   getOneTrack,
   updateTrack,
 } from './tracks.repository';
-import { UUID } from 'crypto';
+import { UUID } from 'node:crypto';
 
 @Injectable()
 export class TracksService {

@@ -5,7 +5,7 @@ export class Track {
   albumId: string | null; // refers to Album
   duration: number; // integer number
 
-  constructor(user: Track) {
-    Object.assign(this, user);
+  constructor(track: Track) {
+    Object.assign(this, track);
   }
 }

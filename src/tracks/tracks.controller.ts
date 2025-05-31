@@ -14,7 +14,7 @@ import {
 import { TracksService } from './tracks.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { UUID } from 'crypto';
+import { UUID } from 'node:crypto';
 
 @Controller('track')
 export class TracksController {
