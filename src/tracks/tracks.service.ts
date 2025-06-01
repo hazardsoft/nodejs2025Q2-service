@@ -11,10 +11,12 @@ import {
   updateTrack,
 } from './tracks.repository';
 import { UUID } from 'node:crypto';
-import { OnEvent } from '@nestjs/event-emitter';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class TracksService {
+  constructor(private readonly emitter: EventEmitter2) {}
+
   create(createTrackDto: CreateTrackDto) {
     return createTrack(createTrackDto);
   }
@@ -32,7 +34,11 @@ export class TracksService {
   }
 
   remove(id: UUID) {
-    return deleteTrack(id);
+    const deletedTrack = deleteTrack(id);
+    if (deletedTrack) {
+      this.emitter.emit('track.deleted', id);
+    }
+    return deletedTrack;
   }
 
   @OnEvent('artist.deleted')
