@@ -45,6 +45,12 @@ const clearArtist = (id: UUID): void => {
   });
 };
 
+const clearAlbum = (id: UUID): void => {
+  tracks.forEach((track) => {
+    if (track.albumId === id) track.albumId = null;
+  });
+};
+
 export {
   getAllTracks,
   getOneTrack,
@@ -52,4 +58,5 @@ export {
   updateTrack,
   deleteTrack,
   clearArtist,
+  clearAlbum,
 };

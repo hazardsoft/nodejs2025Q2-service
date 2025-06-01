@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import {
+  clearAlbum,
   clearArtist,
   createTrack,
   deleteTrack,
@@ -37,5 +38,10 @@ export class TracksService {
   @OnEvent('artist.deleted')
   onArtistDeleted(id: UUID) {
     clearArtist(id);
+  }
+
+  @OnEvent('album.deleted')
+  onAlbumDeleted(id: UUID) {
+    clearAlbum(id);
   }
 }

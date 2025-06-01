@@ -10,10 +10,12 @@ import {
   updateAlbum,
 } from './albums.repository';
 import { UUID } from 'node:crypto';
-import { OnEvent } from '@nestjs/event-emitter';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class AlbumsService {
+  constructor(private readonly emitter: EventEmitter2) {}
+
   create(createAlbumDto: CreateAlbumDto) {
     return createAlbum(createAlbumDto);
   }
@@ -31,7 +33,11 @@ export class AlbumsService {
   }
 
   remove(id: UUID) {
-    return deleteAlbum(id);
+    const deletedAlbum = deleteAlbum(id);
+    if (deletedAlbum) {
+      this.emitter.emit('album.deleted', id);
+    }
+    return deletedAlbum;
   }
 
   @OnEvent('artist.deleted')
