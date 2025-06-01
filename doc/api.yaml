@@ -163,6 +163,7 @@ paths:
         required: true
         schema:
           type: string
+          format: uuid
     get:
       tags:
         - Users
