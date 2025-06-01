@@ -39,4 +39,17 @@ const deleteTrack = (id: UUID): Track | null => {
   return null;
 };
 
-export { getAllTracks, getOneTrack, createTrack, updateTrack, deleteTrack };
+const clearArtist = (id: UUID): void => {
+  tracks.forEach((track) => {
+    if (track.artistId === id) track.artistId = null;
+  });
+};
+
+export {
+  getAllTracks,
+  getOneTrack,
+  createTrack,
+  updateTrack,
+  deleteTrack,
+  clearArtist,
+};

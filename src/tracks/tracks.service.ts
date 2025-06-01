@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import {
+  clearArtist,
   createTrack,
   deleteTrack,
   getAllTracks,
@@ -9,6 +10,7 @@ import {
   updateTrack,
 } from './tracks.repository';
 import { UUID } from 'node:crypto';
+import { OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class TracksService {
@@ -30,5 +32,10 @@ export class TracksService {
 
   remove(id: UUID) {
     return deleteTrack(id);
+  }
+
+  @OnEvent('artist.deleted')
+  onArtistDeleted(id: UUID) {
+    clearArtist(id);
   }
 }
