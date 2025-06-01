@@ -15,6 +15,7 @@ import { UUID } from 'node:crypto';
 import { TracksService } from 'src/tracks/tracks.service';
 import { AlbumsService } from 'src/albums/albums.service';
 import { ArtistsService } from 'src/artists/artists.service';
+import { FavAlreadyExists } from './errors/favorites.errors';
 
 @Controller('favs')
 export class FavoritesController {
@@ -29,30 +30,51 @@ export class FavoritesController {
   createTrackFav(@Param('id', new ParseUUIDPipe()) trackId: UUID) {
     if (!this.tracksService.findOne(trackId))
       throw new UnprocessableEntityException();
-    this.favoritesService.createTrack(trackId);
-    return {
-      message: `track ${trackId} is added to favs`,
-    };
+    try {
+      this.favoritesService.createTrack(trackId);
+      return {
+        message: `track ${trackId} is added to favs`,
+      };
+    } catch (error) {
+      if (error instanceof FavAlreadyExists) {
+        throw new UnprocessableEntityException();
+      }
+      throw error;
+    }
   }
 
   @Post('album/:id')
   createAlbumFav(@Param('id', new ParseUUIDPipe()) albumId: UUID) {
     if (!this.albumsService.findOne(albumId))
       throw new UnprocessableEntityException();
-    this.favoritesService.createAlbum(albumId);
-    return {
-      message: `album ${albumId} is added to favs`,
-    };
+    try {
+      this.favoritesService.createAlbum(albumId);
+      return {
+        message: `album ${albumId} is added to favs`,
+      };
+    } catch (error) {
+      if (error instanceof FavAlreadyExists) {
+        throw new UnprocessableEntityException();
+      }
+      throw error;
+    }
   }
 
   @Post('artist/:id')
   createArtistFav(@Param('id', new ParseUUIDPipe()) artistId: UUID) {
     if (!this.artistsService.findOne(artistId))
       throw new UnprocessableEntityException();
-    this.favoritesService.createArtist(artistId);
-    return {
-      message: `artist ${artistId} is added to favs`,
-    };
+    try {
+      this.favoritesService.createArtist(artistId);
+      return {
+        message: `artist ${artistId} is added to favs`,
+      };
+    } catch (error) {
+      if (error instanceof FavAlreadyExists) {
+        throw new UnprocessableEntityException();
+      }
+      throw error;
+    }
   }
 
   @Get()

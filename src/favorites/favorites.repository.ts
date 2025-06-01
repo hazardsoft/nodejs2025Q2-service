@@ -1,4 +1,5 @@
 import { UUID } from 'node:crypto';
+import { FavAlreadyExists } from './errors/favorites.errors';
 
 const tracks: UUID[] = [];
 const albums: UUID[] = [];
@@ -17,14 +18,17 @@ const getAllArtistFavs = (): UUID[] => {
 };
 
 const createTrackFav = (id: UUID) => {
+  if (tracks.includes(id)) throw new FavAlreadyExists();
   tracks.push(id);
 };
 
 const createAlbumFav = (id: UUID) => {
+  if (albums.includes(id)) throw new FavAlreadyExists();
   albums.push(id);
 };
 
 const createArtistFav = (id: UUID) => {
+  if (artists.includes(id)) throw new FavAlreadyExists();
   artists.push(id);
 };
 
