@@ -6,6 +6,7 @@ import { TracksModule } from './tracks/tracks.module';
 import { ArtistsModule } from './artists/artists.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AlbumsModule } from './albums/albums.module';
+import { FavoritesModule } from './favorites/favorites.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AlbumsModule } from './albums/albums.module';
     TracksModule,
     ArtistsModule,
     AlbumsModule,
+    FavoritesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
