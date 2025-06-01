@@ -6,6 +6,10 @@
 npm install
 ```
 
+## Environment
+
+Duplicate `.env.example`, rename to `.env` and set `PORT` if necessary.
+
 ## Running application
 
 ```
