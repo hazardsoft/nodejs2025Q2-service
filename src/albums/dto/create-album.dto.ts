@@ -1,20 +1,24 @@
 import {
   IsDefined,
+  IsInt,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
+  IsPositive,
   IsString,
+  IsUUID,
 } from 'class-validator';
 
 export class CreateAlbumDto {
   @IsNotEmpty()
+  @IsString()
   name: string;
 
   @IsDefined()
-  @IsNumber()
+  @IsInt()
+  @IsPositive()
   year: number;
 
   @IsOptional()
-  @IsString()
+  @IsUUID()
   artistId: string | null; // refers to Artist
 }
