@@ -4,6 +4,7 @@
 dist
 doc
 docker
+generated
 test
 .dockerignore
 node_modules
