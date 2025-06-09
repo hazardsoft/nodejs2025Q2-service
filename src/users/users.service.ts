@@ -1,34 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import {
-  createUser,
-  deleteUser,
-  getAllUsers,
-  getOneUser,
-  updatePassword,
-} from './users.repository';
+import { UsersRepository } from './users.repository';
 import { UUID } from 'node:crypto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { plainToInstance } from 'class-transformer';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return createUser(createUserDto);
+  constructor(private readonly repository: UsersRepository) {}
+
+  async create(createUserDto: CreateUserDto) {
+    return plainToInstance(
+      User,
+      await this.repository.createUser(createUserDto),
+    );
   }
 
-  findAll() {
-    return getAllUsers();
+  async findAll() {
+    return plainToInstance(User, await this.repository.getAllUsers());
   }
 
-  findOne(id: UUID) {
-    return getOneUser(id);
+  async findOne(id: UUID) {
+    return plainToInstance(User, await this.repository.getOneUser(id));
   }
 
-  updatePassword(id: UUID, updatePasswordDto: UpdatePasswordDto) {
-    return updatePassword(id, updatePasswordDto);
+  async updatePassword(id: UUID, updatePasswordDto: UpdatePasswordDto) {
+    return plainToInstance(
+      User,
+      await this.repository.updatePassword(id, updatePasswordDto),
+    );
   }
 
-  remove(id: UUID) {
-    return deleteUser(id);
+  async remove(id: UUID) {
+    return plainToInstance(User, await this.repository.deleteUser(id));
   }
 }
