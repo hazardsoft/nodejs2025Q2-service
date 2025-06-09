@@ -67,8 +67,23 @@ npm run lint
 npm run format
 ```
 
-### Debugging in VSCode
+## Docker images: build
 
-Press <kbd>F5</kbd> to debug.
+```sh
+Rest API:
+docker build --tag hazardsoft/library-rest-api --file Dockerfile .
+```
 
-For more information, visit: <https://code.visualstudio.com/docs/editor/debugging>
+## Docker images: run
+
+```sh
+Rest API:
+docker run --publish 4000:4000 -d hazardsoft/library-rest-api
+```
+
+## Docker images: publish
+
+```sh
+Rest API:
+docker push hazardsoft/library-rest-api
+```
