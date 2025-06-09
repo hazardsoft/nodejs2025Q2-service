@@ -3,6 +3,7 @@
 .vscode
 dist
 doc
+docker
 test
 .dockerignore
 node_modules
