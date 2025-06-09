@@ -1,62 +1,50 @@
-import { UUID, randomUUID } from 'node:crypto';
-import { Track } from './entities/track.entity';
+import { UUID } from 'node:crypto';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma.service';
 
-const tracks: Track[] = [];
+@Injectable()
+export class TracksRepository {
+  constructor(private readonly prisma: PrismaService) {}
 
-const getAllTracks = (): Track[] => {
-  return tracks.slice();
-};
-
-const getOneTrack = (id: UUID): Track | null => {
-  const foundTrack = tracks.find((track) => track.id === id);
-  return foundTrack ?? null;
-};
-
-const createTrack = (dto: CreateTrackDto): Track => {
-  const createdTrack: Track = new Track({
-    id: randomUUID(),
-    ...dto,
-  });
-  tracks.push(createdTrack);
-  return createdTrack;
-};
-
-const updateTrack = (id: UUID, dto: UpdateTrackDto): Track | null => {
-  const foundTrack = getOneTrack(id);
-  if (!foundTrack) return null;
-
-  return Object.assign(foundTrack, { ...dto });
-};
-
-const deleteTrack = (id: UUID): Track | null => {
-  const foundIndex = tracks.findIndex((track) => track.id === id);
-  if (foundIndex !== -1) {
-    const deletedTracks = tracks.splice(foundIndex, 1);
-    return deletedTracks.pop();
+  async getAllTracks() {
+    return this.prisma.track.findMany();
   }
-  return null;
-};
 
-const clearArtist = (id: UUID): void => {
-  tracks.forEach((track) => {
-    if (track.artistId === id) track.artistId = null;
-  });
-};
+  async getOneTrack(id: UUID) {
+    const foundTrack = await this.prisma.track.findUnique({
+      where: {
+        id,
+      },
+    });
+    return foundTrack ?? null;
+  }
 
-const clearAlbum = (id: UUID): void => {
-  tracks.forEach((track) => {
-    if (track.albumId === id) track.albumId = null;
-  });
-};
+  async createTrack(dto: CreateTrackDto) {
+    return this.prisma.track.create({
+      data: dto,
+    });
+  }
 
-export {
-  getAllTracks,
-  getOneTrack,
-  createTrack,
-  updateTrack,
-  deleteTrack,
-  clearArtist,
-  clearAlbum,
-};
+  async updateTrack(id: UUID, dto: UpdateTrackDto) {
+    const foundTrack = await this.getOneTrack(id);
+    if (!foundTrack) return null;
+
+    return this.prisma.track.update({
+      where: {
+        id,
+      },
+      data: dto,
+    });
+  }
+
+  async deleteTrack(id: UUID) {
+    try {
+      const deletedTrack = await this.prisma.track.delete({ where: { id } });
+      return deletedTrack;
+    } catch {
+      return null;
+    }
+  }
+}
