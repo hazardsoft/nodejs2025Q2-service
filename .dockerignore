@@ -1,0 +1,16 @@
+.DS_Store
+.git
+.vscode
+dist
+doc
+test
+.dockerignore
+node_modules
+.env.example
+.eslintrc.js
+.gitignore
+.prettierrc
+Dockerfile
+jest.config.json
+nest-cli.json
+README.md
