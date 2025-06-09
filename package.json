@@ -27,7 +27,11 @@
     "docker:build:library": "docker build --tag hazardsoft/library-rest-api --file docker/rest/Dockerfile .",
     "docker:run:library": "docker run --publish 4000:4000 -d hazardsoft/library-rest-api",
     "docker:publish:library": "docker push hazardsoft/library-rest-api",
-    "docker:cve:library": "docker scout cves hazardsoft/library-rest-api"
+    "docker:cves:library": "docker scout cves hazardsoft/library-rest-api",
+    "docker:build:db": "docker build --tag hazardsoft/library-database --file docker/db/Dockerfile .",
+    "docker:run:db": "docker run --publish 5432:5432 -d hazardsoft/library-database",
+    "docker:publish:db": "docker push hazardsoft/library-database",
+    "docker:cves:db": "docker scout cves hazardsoft/library-database"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.16",

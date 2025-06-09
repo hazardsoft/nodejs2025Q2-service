@@ -5,6 +5,7 @@ dist
 doc
 docker
 generated
+src
 test
 .dockerignore
 node_modules
@@ -13,6 +14,7 @@ node_modules
 .gitignore
 .prettierrc
 Dockerfile
+docker-compose*.yml
 jest.config.json
 nest-cli.json
 README.md
