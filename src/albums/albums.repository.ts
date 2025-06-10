@@ -22,14 +22,21 @@ export class AlbumsRepository {
   }
 
   async updateAlbum(id: UUID, dto: UpdateAlbumDto) {
-    const foundAlbum = await this.getOneAlbum(id);
-    if (!foundAlbum) return null;
-    return this.prisma.album.update({ where: { id }, data: dto });
+    try {
+      const updatedAlbum = await this.prisma.album.update({
+        where: { id },
+        data: dto,
+      });
+      return updatedAlbum;
+    } catch (error) {
+      return null;
+    }
   }
 
   async deleteAlbum(id: UUID) {
     try {
-      return this.prisma.album.delete({ where: { id } });
+      const deletedAlbum = await this.prisma.album.delete({ where: { id } });
+      return deletedAlbum;
     } catch {
       return null;
     }
