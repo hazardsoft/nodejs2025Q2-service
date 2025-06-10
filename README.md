@@ -77,7 +77,7 @@ npm run format
 Rest API:
 
 ```sh
-docker build --tag hazardsoft/library-rest-api --file Dockerfile .
+docker build --tag hazardsoft/library-rest-api --file docker/rest/Dockerfile .
 
 ```
 
