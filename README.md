@@ -115,6 +115,20 @@ PostgreSQL:
 docker push hazardsoft/library-database
 ```
 
+### Check images vulnerabilities
+
+Rest API:
+
+```sh
+docker scout cves hazardsoft/library-rest-api:latest
+```
+
+PostgreSQL:
+
+```sh
+docker scout cves hazardsoft/library-database:latest
+```
+
 ### Run Application
 
 Docker Compose is used to run application (REST API application and PostgreSQL server will be started).
