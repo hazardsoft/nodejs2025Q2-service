@@ -4,14 +4,12 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TracksModule } from './tracks/tracks.module';
 import { ArtistsModule } from './artists/artists.module';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AlbumsModule } from './albums/albums.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { PrismaModule } from './prisma.module';
 
 @Module({
   imports: [
-    EventEmitterModule.forRoot(),
     UsersModule,
     TracksModule,
     ArtistsModule,

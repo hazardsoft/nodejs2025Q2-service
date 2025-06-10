@@ -27,11 +27,11 @@ export class FavoritesController {
   ) {}
 
   @Post('track/:id')
-  createTrackFav(@Param('id', new ParseUUIDPipe()) trackId: UUID) {
-    if (!this.tracksService.findOne(trackId))
+  async createTrackFav(@Param('id', new ParseUUIDPipe()) trackId: UUID) {
+    if (!(await this.tracksService.findOne(trackId)))
       throw new UnprocessableEntityException();
     try {
-      this.favoritesService.createTrack(trackId);
+      await this.favoritesService.createTrack(trackId);
       return {
         message: `track ${trackId} is added to favs`,
       };
@@ -44,11 +44,11 @@ export class FavoritesController {
   }
 
   @Post('album/:id')
-  createAlbumFav(@Param('id', new ParseUUIDPipe()) albumId: UUID) {
-    if (!this.albumsService.findOne(albumId))
+  async createAlbumFav(@Param('id', new ParseUUIDPipe()) albumId: UUID) {
+    if (!(await this.albumsService.findOne(albumId)))
       throw new UnprocessableEntityException();
     try {
-      this.favoritesService.createAlbum(albumId);
+      await this.favoritesService.createAlbum(albumId);
       return {
         message: `album ${albumId} is added to favs`,
       };
@@ -61,11 +61,11 @@ export class FavoritesController {
   }
 
   @Post('artist/:id')
-  createArtistFav(@Param('id', new ParseUUIDPipe()) artistId: UUID) {
-    if (!this.artistsService.findOne(artistId))
+  async createArtistFav(@Param('id', new ParseUUIDPipe()) artistId: UUID) {
+    if (!(await this.artistsService.findOne(artistId)))
       throw new UnprocessableEntityException();
     try {
-      this.favoritesService.createArtist(artistId);
+      await this.favoritesService.createArtist(artistId);
       return {
         message: `artist ${artistId} is added to favs`,
       };
@@ -78,20 +78,16 @@ export class FavoritesController {
   }
 
   @Get()
-  findAll() {
-    const artistFavs = this.favoritesService.getAllArtists();
-    const albumFavs = this.favoritesService.getAllAlbums();
-    const trackFavs = this.favoritesService.getAllTracks();
-
-    const artists = artistFavs.map((artistId) => {
-      return this.artistsService.findOne(artistId);
-    });
-    const albums = albumFavs.map((albumId) => {
-      return this.albumsService.findOne(albumId);
-    });
-    const tracks = trackFavs.map((trackId) => {
-      return this.tracksService.findOne(trackId);
-    });
+  async findAll() {
+    const artists = (await this.favoritesService.getAllArtists()).map(
+      (favArtist) => favArtist.artist,
+    );
+    const albums = (await this.favoritesService.getAllAlbums()).map(
+      (favAlbum) => favAlbum.album,
+    );
+    const tracks = (await this.favoritesService.getAllTracks()).map(
+      (favTrack) => favTrack.track,
+    );
 
     return {
       artists,
