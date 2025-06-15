@@ -18,6 +18,7 @@ export class LoggerMiddleware implements NestMiddleware {
       const executionTime: string = `${end - start}`;
 
       this.logginService.log(
+        'info',
         `${req.method} ${req.url}, query ${query}, params ${params}, body ${body} - status code ${res.statusCode} (${executionTime}ms)`,
       );
     });

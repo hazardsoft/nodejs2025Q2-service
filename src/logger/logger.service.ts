@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class LoggingService {
-  log(message: string) {
+  log(level: string, message: string) {
     console.log(message);
   }
 }
