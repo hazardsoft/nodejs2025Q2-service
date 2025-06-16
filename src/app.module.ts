@@ -10,6 +10,7 @@ import { PrismaModule } from './prisma.module';
 import { LoggingModule } from './logger/logger.module';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { ExceptionModule } from './errors/exception.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ExceptionModule } from './errors/exception.module';
     PrismaModule,
     LoggingModule,
     ExceptionModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

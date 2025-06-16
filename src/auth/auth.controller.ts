@@ -1,0 +1,40 @@
+import {
+  Controller,
+  Post,
+  Body,
+  NotFoundException,
+  ForbiddenException,
+  HttpStatus,
+  HttpCode,
+} from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { SignUpDto } from './dto/signup.dto';
+import { LoginDto } from './dto/login.dto';
+import { NotValidPassword } from 'src/users/errors/users.errors';
+
+@Controller('auth')
+export class AuthController {
+  constructor(private readonly authService: AuthService) {}
+
+  @Post('signup')
+  async signup(@Body() signUpDto: SignUpDto) {
+    return this.authService.signup(signUpDto);
+  }
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  async login(@Body() loginDto: LoginDto) {
+    try {
+      const sessionDto = await this.authService.login(loginDto);
+      return sessionDto;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new ForbiddenException();
+      }
+      if (error instanceof NotValidPassword) {
+        throw new ForbiddenException();
+      }
+      throw error;
+    }
+  }
+}

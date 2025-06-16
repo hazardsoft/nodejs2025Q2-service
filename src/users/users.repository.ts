@@ -22,6 +22,15 @@ export class UsersRepository {
     return foundUser ?? null;
   }
 
+  async getOneUserByLogin(login: string) {
+    const foundUser = await this.prisma.user.findUnique({
+      where: {
+        login,
+      },
+    });
+    return foundUser ?? null;
+  }
+
   async createUser(dto: CreateUserDto) {
     return this.prisma.user.create({
       data: {
