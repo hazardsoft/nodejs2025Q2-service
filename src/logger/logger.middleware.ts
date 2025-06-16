@@ -1,7 +1,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { finished } from 'node:stream';
-import { LoggingService } from './logger.service';
+import { LoggingService, LogLevel } from './logger.service';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
@@ -18,7 +18,7 @@ export class LoggerMiddleware implements NestMiddleware {
       const executionTime: string = `${end - start}`;
 
       this.logginService.log(
-        'info',
+        LogLevel.log,
         `${req.method} ${req.url}, query ${query}, params ${params}, body ${body} - status code ${res.statusCode} (${executionTime}ms)`,
       );
     });

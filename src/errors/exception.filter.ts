@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { StatusCodes } from 'http-status-codes';
-import { LoggingService } from 'src/logger/logger.service';
+import { LoggingService, LogLevel } from 'src/logger/logger.service';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -27,7 +27,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const cause = exception instanceof HttpException ? exception.message : null;
 
     this.logginService.log(
-      'error',
+      LogLevel.error,
       `error with status code ${statusCode} occured, cause ${cause}`,
     );
 
