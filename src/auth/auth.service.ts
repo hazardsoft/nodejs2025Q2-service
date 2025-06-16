@@ -7,6 +7,7 @@ import { NotValidPassword } from 'src/users/errors/users.errors';
 import { User } from 'src/users/entities/user.entity';
 import { plainToInstance } from 'class-transformer';
 import { UsersRepository } from 'src/users/users.repository';
+import { JwtService } from '@nestjs/jwt';
 
 const saltRounds = Number(process.env.SALT_ROUNDS) ?? 10;
 
@@ -15,6 +16,7 @@ export class AuthService {
   constructor(
     private readonly userService: UsersService,
     private readonly userRepository: UsersRepository,
+    private readonly jwtService: JwtService,
   ) {}
 
   async signup(signUpDto: SignUpDto) {
@@ -38,6 +40,9 @@ export class AuthService {
       foundUser.password,
     );
     if (!isValidPassword) throw new NotValidPassword();
-    return plainToInstance(User, foundUser);
+    const payload = { userId: foundUser.id, login: loginDto.login };
+    return {
+      accessToken: await this.jwtService.signAsync(payload),
+    };
   }
 }

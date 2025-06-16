@@ -5,9 +5,21 @@ import { UsersModule } from 'src/users/users.module';
 import { UsersService } from 'src/users/users.service';
 import { UsersRepository } from 'src/users/users.repository';
 import { PrismaService } from 'src/prisma.service';
+import { JwtModule } from '@nestjs/jwt';
+
+const jwtSecret = String(process.env.JWT_SECRET) ?? '';
+const accessTokenExpirationTime =
+  Number(process.env.ACCESS_TOKEN_EXPIRATION_TIME) ?? 60;
 
 @Module({
-  imports: [UsersModule],
+  imports: [
+    UsersModule,
+    JwtModule.register({
+      global: true,
+      secret: jwtSecret,
+      signOptions: { expiresIn: `${accessTokenExpirationTime}s` },
+    }),
+  ],
   controllers: [AuthController],
   providers: [AuthService, UsersService, UsersRepository, PrismaService],
 })

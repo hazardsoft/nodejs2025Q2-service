@@ -18,15 +18,15 @@ export class AuthController {
 
   @Post('signup')
   async signup(@Body() signUpDto: SignUpDto) {
-    return this.authService.signup(signUpDto);
+    await this.authService.signup(signUpDto);
   }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: LoginDto) {
     try {
-      const sessionDto = await this.authService.login(loginDto);
-      return sessionDto;
+      const sessionInfo = await this.authService.login(loginDto);
+      return sessionInfo;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new ForbiddenException();
