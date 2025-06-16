@@ -24,7 +24,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.getStatus()
         : StatusCodes.INTERNAL_SERVER_ERROR;
 
-    const cause = exception instanceof HttpException ? exception.cause : null;
+    const cause = exception instanceof HttpException ? exception.message : null;
 
     this.logginService.log(
       'error',
@@ -37,7 +37,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
     };
     if (cause) {
-      Object.assign(responseBody, { cause });
+      Object.assign(responseBody, { error: cause });
     }
 
     httpAdapter.reply(ctx.getResponse(), responseBody, statusCode);

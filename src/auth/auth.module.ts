@@ -6,6 +6,8 @@ import { UsersService } from 'src/users/users.service';
 import { UsersRepository } from 'src/users/users.repository';
 import { PrismaService } from 'src/prisma.service';
 import { JwtModule } from '@nestjs/jwt';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth.guard';
 
 const jwtSecret = String(process.env.JWT_SECRET) ?? '';
 const accessTokenExpirationTime =
@@ -21,6 +23,15 @@ const accessTokenExpirationTime =
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, UsersRepository, PrismaService],
+  providers: [
+    AuthService,
+    UsersService,
+    UsersRepository,
+    PrismaService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AuthModule {}
