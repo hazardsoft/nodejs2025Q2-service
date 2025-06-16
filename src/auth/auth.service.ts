@@ -14,8 +14,7 @@ import {
   refreshTokenSecret,
   saltRounds,
 } from './consts';
-import { InvalidAccessToken, InvalidRefreshToken } from './errors/auth.error';
-import { UUID } from 'node:crypto';
+import { InvalidRefreshToken } from './errors/auth.error';
 
 @Injectable()
 export class AuthService {
