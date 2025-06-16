@@ -4,12 +4,18 @@ import { LoginDto } from './dto/login.dto';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { NotValidPassword } from 'src/users/errors/users.errors';
-import { User } from 'src/users/entities/user.entity';
-import { plainToInstance } from 'class-transformer';
 import { UsersRepository } from 'src/users/users.repository';
 import { JwtService } from '@nestjs/jwt';
-
-const saltRounds = Number(process.env.SALT_ROUNDS) ?? 10;
+import { RefreshDto } from './dto/refresh.dto';
+import {
+  accessTokenExpirationTime,
+  accessTokenSecret,
+  refreshTokenExpirationTime,
+  refreshTokenSecret,
+  saltRounds,
+} from './consts';
+import { InvalidAccessToken, InvalidRefreshToken } from './errors/auth.error';
+import { UUID } from 'node:crypto';
 
 @Injectable()
 export class AuthService {
@@ -40,9 +46,32 @@ export class AuthService {
       foundUser.password,
     );
     if (!isValidPassword) throw new NotValidPassword();
-    const payload = { userId: foundUser.id, login: loginDto.login };
+    return await this.generateTokens(foundUser.id, loginDto.login);
+  }
+
+  async refresh(refreshDto: RefreshDto) {
+    try {
+      const payload: { userId: string; login: string } =
+        await this.jwtService.verifyAsync(refreshDto.refreshToken, {
+          secret: refreshTokenSecret,
+        });
+      return this.generateTokens(payload.userId, payload.login);
+    } catch (error) {
+      throw new InvalidRefreshToken();
+    }
+  }
+
+  private async generateTokens(id: string, login: string) {
+    const payload = { userId: id, login };
     return {
-      accessToken: await this.jwtService.signAsync(payload),
+      accessToken: await this.jwtService.signAsync(payload, {
+        secret: accessTokenSecret,
+        expiresIn: `${accessTokenExpirationTime}s`,
+      }),
+      refreshToken: await this.jwtService.signAsync(payload, {
+        secret: refreshTokenSecret,
+        expiresIn: `${refreshTokenExpirationTime}s`,
+      }),
     };
   }
 }

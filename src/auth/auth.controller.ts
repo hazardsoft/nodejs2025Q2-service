@@ -12,6 +12,7 @@ import { SignUpDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
 import { NotValidPassword } from 'src/users/errors/users.errors';
 import { Public } from './auth.meta';
+import { RefreshDto } from './dto/refresh.dto';
 
 @Public()
 @Controller('auth')
@@ -38,5 +39,12 @@ export class AuthController {
       }
       throw error;
     }
+  }
+
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  async refresh(@Body() refreshDto: RefreshDto) {
+    const sessionInfo = await this.authService.refresh(refreshDto);
+    return sessionInfo;
   }
 }

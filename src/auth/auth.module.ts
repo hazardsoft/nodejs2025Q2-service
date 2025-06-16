@@ -9,17 +9,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
 
-const jwtSecret = String(process.env.JWT_SECRET) ?? '';
-const accessTokenExpirationTime =
-  Number(process.env.ACCESS_TOKEN_EXPIRATION_TIME) ?? 60;
-
 @Module({
   imports: [
     UsersModule,
     JwtModule.register({
       global: true,
-      secret: jwtSecret,
-      signOptions: { expiresIn: `${accessTokenExpirationTime}s` },
     }),
   ],
   controllers: [AuthController],
