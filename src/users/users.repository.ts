@@ -1,57 +1,72 @@
-import { UUID, randomUUID } from 'node:crypto';
-import { User } from './entities/user.entity';
+import { UUID } from 'node:crypto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { NotValidPassword } from './errors/users.errors';
+import { PrismaService } from 'src/prisma.service';
+import { Injectable } from '@nestjs/common';
 
-const users: User[] = [];
+@Injectable()
+export class UsersRepository {
+  constructor(private readonly prisma: PrismaService) {}
 
-const getAllUsers = (): User[] => {
-  return users.slice();
-};
-
-const getOneUser = (id: UUID): User | null => {
-  const foundUser = users.find((user) => user.id === id);
-  return foundUser ?? null;
-};
-
-const createUser = (dto: CreateUserDto): User => {
-  const timestamp = new Date().getTime();
-  const createdUser: User = new User({
-    id: randomUUID(),
-    ...dto,
-    version: 1,
-    createdAt: timestamp,
-    updatedAt: timestamp,
-  });
-  users.push(createdUser);
-  return createdUser;
-};
-
-const updatePassword = (id: UUID, dto: UpdatePasswordDto): User | null => {
-  const foundUser = getOneUser(id);
-  if (!foundUser) return null;
-
-  if (foundUser.password !== dto.oldPassword) {
-    throw new NotValidPassword();
+  async getAllUsers() {
+    return this.prisma.user.findMany();
   }
 
-  const timestamp = new Date().getTime();
-  let currentVersion = foundUser.version++;
-  return Object.assign(foundUser, {
-    password: dto.newPassword,
-    updatedAt: timestamp,
-    version: ++currentVersion,
-  });
-};
-
-const deleteUser = (id: UUID): User | null => {
-  const foundIndex = users.findIndex((user) => user.id === id);
-  if (foundIndex !== -1) {
-    const deletedUsers = users.splice(foundIndex, 1);
-    return deletedUsers.pop();
+  async getOneUser(id: UUID) {
+    const foundUser = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+    return foundUser ?? null;
   }
-  return null;
-};
 
-export { getAllUsers, getOneUser, createUser, updatePassword, deleteUser };
+  async createUser(dto: CreateUserDto) {
+    return this.prisma.user.create({
+      data: {
+        login: dto.login,
+        password: dto.password,
+      },
+    });
+  }
+
+  async updatePassword(id: UUID, dto: UpdatePasswordDto) {
+    const foundUser = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!foundUser) return null;
+
+    if (foundUser.password !== dto.oldPassword) {
+      throw new NotValidPassword();
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        password: dto.newPassword,
+        version: {
+          increment: 1,
+        },
+      },
+    });
+    return updatedUser;
+  }
+
+  async deleteUser(id: UUID) {
+    try {
+      const deletedUser = await this.prisma.user.delete({
+        where: {
+          id,
+        },
+      });
+      return deletedUser;
+    } catch {
+      return null;
+    }
+  }
+}
