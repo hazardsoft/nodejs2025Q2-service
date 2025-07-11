@@ -1,3 +1,11 @@
+process.once('uncaughtException', (error) => {
+  throw error;
+});
+
+process.on('unhandledRejection', (error) => {
+  throw error;
+});
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';

@@ -1,47 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import {
-  clearArtist,
-  createAlbum,
-  deleteAlbum,
-  getAllAlbums,
-  getOneAlbum,
-  updateAlbum,
-} from './albums.repository';
 import { UUID } from 'node:crypto';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { AlbumsRepository } from './albums.repository';
 
 @Injectable()
 export class AlbumsService {
-  constructor(private readonly emitter: EventEmitter2) {}
+  constructor(private readonly repository: AlbumsRepository) {}
 
-  create(createAlbumDto: CreateAlbumDto) {
-    return createAlbum(createAlbumDto);
+  async create(createAlbumDto: CreateAlbumDto) {
+    return this.repository.createAlbum(createAlbumDto);
   }
 
-  findAll() {
-    return getAllAlbums();
+  async findAll() {
+    return this.repository.getAllAlbums();
   }
 
-  findOne(id: UUID) {
-    return getOneAlbum(id);
+  async findOne(id: UUID) {
+    return this.repository.getOneAlbum(id);
   }
 
-  update(id: UUID, updateAlbumDto: UpdateAlbumDto) {
-    return updateAlbum(id, updateAlbumDto);
+  async update(id: UUID, updateAlbumDto: UpdateAlbumDto) {
+    return this.repository.updateAlbum(id, updateAlbumDto);
   }
 
-  remove(id: UUID) {
-    const deletedAlbum = deleteAlbum(id);
-    if (deletedAlbum) {
-      this.emitter.emit('album.deleted', id);
-    }
-    return deletedAlbum;
-  }
-
-  @OnEvent('artist.deleted')
-  onArtistDeleted(id: UUID) {
-    clearArtist(id);
+  async remove(id: UUID) {
+    return this.repository.deleteAlbum(id);
   }
 }

@@ -1,68 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 import { UUID } from 'node:crypto';
-import {
-  createAlbumFav,
-  createArtistFav,
-  createTrackFav,
-  deleteAlbumFav,
-  deleteArtistFav,
-  deleteTrackFav,
-  getAllAlbumFavs,
-  getAllArtistFavs,
-  getAllTrackFavs,
-} from './favorites.repository';
+import { FavoritesRepository } from './favorites.repository';
 
 @Injectable()
 export class FavoritesService {
-  createTrack(id: UUID) {
-    return createTrackFav(id);
+  constructor(private readonly repository: FavoritesRepository) {}
+
+  async createTrack(id: UUID) {
+    return this.repository.createTrackFav(id);
   }
 
-  createAlbum(id: UUID) {
-    return createAlbumFav(id);
+  async createAlbum(id: UUID) {
+    return this.repository.createAlbumFav(id);
   }
 
-  createArtist(id: UUID) {
-    return createArtistFav(id);
+  async createArtist(id: UUID) {
+    return this.repository.createArtistFav(id);
   }
 
-  removeTrack(id: UUID) {
-    return deleteTrackFav(id);
+  async removeTrack(id: UUID) {
+    return this.repository.deleteTrackFav(id);
   }
 
-  removeAlbum(id: UUID) {
-    return deleteAlbumFav(id);
+  async removeAlbum(id: UUID) {
+    return this.repository.deleteAlbumFav(id);
   }
 
-  removeArtist(id: UUID) {
-    return deleteArtistFav(id);
+  async removeArtist(id: UUID) {
+    return this.repository.deleteArtistFav(id);
   }
 
-  getAllTracks(): UUID[] {
-    return getAllTrackFavs();
+  async getAllTracks() {
+    return this.repository.getAllTrackFavs();
   }
 
-  getAllAlbums(): UUID[] {
-    return getAllAlbumFavs();
+  async getAllAlbums() {
+    return this.repository.getAllAlbumFavs();
   }
 
-  getAllArtists(): UUID[] {
-    return getAllArtistFavs();
-  }
-
-  @OnEvent('artist.deleted')
-  onArtistDeleted(id: UUID) {
-    this.removeArtist(id);
-  }
-
-  @OnEvent('album.deleted')
-  onAlbumDeleted(id: UUID) {
-    this.removeAlbum(id);
-  }
-
-  @OnEvent('track.deleted')
-  onTrackDeleted(id: UUID) {
-    this.removeTrack(id);
+  async getAllArtists() {
+    return this.repository.getAllArtistFavs();
   }
 }

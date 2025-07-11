@@ -1,53 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import {
-  clearAlbum,
-  clearArtist,
-  createTrack,
-  deleteTrack,
-  getAllTracks,
-  getOneTrack,
-  updateTrack,
-} from './tracks.repository';
 import { UUID } from 'node:crypto';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { TracksRepository } from './tracks.repository';
+import { plainToInstance } from 'class-transformer';
+import { Track } from './entities/track.entity';
 
 @Injectable()
 export class TracksService {
-  constructor(private readonly emitter: EventEmitter2) {}
+  constructor(private readonly repository: TracksRepository) {}
 
-  create(createTrackDto: CreateTrackDto) {
-    return createTrack(createTrackDto);
+  async create(createTrackDto: CreateTrackDto) {
+    return plainToInstance(
+      Track,
+      await this.repository.createTrack(createTrackDto),
+    );
   }
 
-  findAll() {
-    return getAllTracks();
+  async findAll() {
+    return plainToInstance(Track, await this.repository.getAllTracks());
   }
 
-  findOne(id: UUID) {
-    return getOneTrack(id);
+  async findOne(id: UUID) {
+    return plainToInstance(Track, await this.repository.getOneTrack(id));
   }
 
-  update(id: UUID, updateTrackDto: UpdateTrackDto) {
-    return updateTrack(id, updateTrackDto);
+  async update(id: UUID, updateTrackDto: UpdateTrackDto) {
+    return plainToInstance(
+      Track,
+      await this.repository.updateTrack(id, updateTrackDto),
+    );
   }
 
-  remove(id: UUID) {
-    const deletedTrack = deleteTrack(id);
-    if (deletedTrack) {
-      this.emitter.emit('track.deleted', id);
-    }
-    return deletedTrack;
-  }
-
-  @OnEvent('artist.deleted')
-  onArtistDeleted(id: UUID) {
-    clearArtist(id);
-  }
-
-  @OnEvent('album.deleted')
-  onAlbumDeleted(id: UUID) {
-    clearAlbum(id);
+  async remove(id: UUID) {
+    return plainToInstance(Track, await this.repository.deleteTrack(id));
   }
 }
