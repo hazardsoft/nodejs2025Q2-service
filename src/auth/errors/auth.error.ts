@@ -8,6 +8,6 @@ export class InvalidAccessToken extends HttpException {
 
 export class InvalidRefreshToken extends HttpException {
   constructor() {
-    super('invalid refresh token', HttpStatus.UNAUTHORIZED);
+    super('invalid refresh token', HttpStatus.FORBIDDEN);
   }
 }

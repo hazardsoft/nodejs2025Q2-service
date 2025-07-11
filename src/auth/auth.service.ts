@@ -1,11 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { SignUpDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { NotValidPassword } from 'src/users/errors/users.errors';
 import { UsersRepository } from 'src/users/users.repository';
-import { JwtService } from '@nestjs/jwt';
+import { JsonWebTokenError, JwtService } from '@nestjs/jwt';
 import { RefreshDto } from './dto/refresh.dto';
 import {
   accessTokenExpirationTime,
@@ -56,7 +60,15 @@ export class AuthService {
         });
       return this.generateTokens(payload.userId, payload.login);
     } catch (error) {
-      throw new InvalidRefreshToken();
+      if (error instanceof JsonWebTokenError) {
+        switch (error.message) {
+          case 'jwt must be provided':
+            throw new UnauthorizedException();
+          default:
+            throw new InvalidRefreshToken();
+        }
+      }
+      throw error;
     }
   }
 
